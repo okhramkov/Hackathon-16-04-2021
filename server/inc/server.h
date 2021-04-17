@@ -1,5 +1,3 @@
-#pragma once
-
 #include <stdio.h>
 #include <unistd.h>
 #include <stdlib.h>
@@ -14,7 +12,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <errno.h>
-#include <malloc.h>
+#include <malloc/malloc.h>
 #include <arpa/inet.h>
 #include <resolv.h>
 #include "openssl/ssl.h"
@@ -39,4 +37,3 @@ struct async_args {
 
 void requests_handler(SSL*);
 void *sqlite3_exec_db(char *query, int type);
-

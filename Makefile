@@ -1,6 +1,6 @@
-NAME = ujcode
+NAME = uchat
 
-SERVER_NAME = server
+SERVER_NAME = uchat_server
 SERVER_DIR = server
 
 CLIENT_DIR = client

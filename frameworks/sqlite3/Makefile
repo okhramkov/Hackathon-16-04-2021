@@ -1,49 +1,52 @@
-# ======== variables ========
-NAME = sqlite3
+NAME = libsqlite3.a
 
-# -- files and dirs --
-DST_INC_DIR = ../../libs/include
-DST_LIB_DIR = ../../libs
+SRC_DIR = src
+OBJ_DIR = obj
+INC_DIR = inc
 
-INC_FILE = $(NAME).h
-SRC_FILE = $(NAME).c
-OBJ_FILE = $(NAME).o
+SRC_FILES = $(wildcard $(SRC_DIR)/*.c)
+OBJ_FILES = $(addprefix $(OBJ_DIR)/, $(notdir $(SRC_FILES:%.c=%.o)))
+INC_FILES = $(wildcard $(INC_DIR)/*.h)
 
-STATIC_LIB = $(DST_LIB_DIR)/libsqlite3.a
+CC = clang
 
-# -- commands --
-RM = rm -rdf
+CFLAGS = -std=c11 $(addprefix -W, all extra error pedantic) -g
+
+SFLAGS = -fPIC -pedantic -Wstrict-prototypes -Wwrite-strings -Wshadow \
+		 -Winit-self -Wcast-align -Wformat=2 -Wmissing-prototypes \
+		 -Wstrict-overflow=2 -Wcast-qual -Wc++-compat -Wundef \
+		 -Wswitch-default -Wconversion
+
+AR = ar
+AFLAGS = rcs
+
 MKDIR = mkdir -p
+RM = rm -rf
 
-CC = clang -std=c89
-# WHY do we use this flag???
-SQL_FLAGS = -DSQLITE_ENABLE_UPDATE_DELETE_LIMIT=1
+all: $(NAME)
 
-# ======== body ========
+$(NAME): $(OBJ_FILES)
+	@$(AR) $(AFLAGS) $@ $^
+	@printf "\r\33[2K$@\t \033[32;1mcreated\033[0m\n"
 
-all: static
+$(OBJ_FILES): | $(OBJ_DIR)
 
-static: $(STATIC_LIB)
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c $(INC_FILES)
+	@$(CC) $(CFLAGS) -c $< -o $@ -I $(INC_DIR)
+	@printf "\r\33[2K$(NAME)\033[33;1m\t compile \033[0m$(<:$(SRC_DIR)/%.c=%)\r"
 
-.c.o:
-	@$(CC) -c $(SQL_FLAGS) $<
-	@printf "$(notdir $@)\033[32;1m created\033[0m\n"
-
-$(STATIC_LIB): $(OBJ_FILE)
-	@$(MKDIR) $(DST_LIB_DIR) $(DST_INC_DIR)
-	@cp $(INC_FILE) $(DST_INC_DIR)/$(INC_FILE)
-	@$(AR) rcs $@ $<
-	@printf "$(notdir $@)\033[32;1m created\033[0m\n"
-
-$(OBJ_FILE): $(SRC_FILE) $(INC_FILE)
-
-uninstall: clean
-	@$(RM) $(STATIC_LIB)
-	@printf "$(notdir $(STATIC_LIB))\033[31;1m deleted\033[0m\n"
+$(OBJ_DIR):
+	@$(MKDIR) $@
 
 clean:
-	@$(RM) $(OBJ_FILE) $(DST_INC_DIR)/$(INC_FILE)
+	@$(RM) $(OBJ_DIR)
+	@printf "$(OBJ_DIR) in $(NAME)\t \033[31;1mdeleted\033[0m\n"
+
+uninstall:
+	@$(RM) $(OBJ_DIR)
+	@$(RM) $(NAME)
+	@@printf "$(NAME)\t \033[31;1muninstalled\033[0m\n"
 
 reinstall: uninstall all
 
-.PHONY: all static clean uninstall reinstall
+.PHONY: all uninstall clean reinstall

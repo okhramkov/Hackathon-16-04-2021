@@ -11,9 +11,10 @@ static void sqlite3_create_db() {
         exit(EXIT_FAILURE);
     }
     sql = mx_strrejoin(sql, "PRAGMA encoding = \"UTF-8\";");
-    sql = mx_strrejoin(sql, "CREATE TABLE `users` ( `id` INTEGER PRIMARY KEY AUTOINCREMENT , `username` VARCHAR(10) NOT NULL , `name` VARCHAR(10) NOT NULL , `password` VARCHAR(16) NOT NULL, `avatar` INT(9) NOT NULL DEFAULT '0', `theme` INT(1) NOT NULL DEFAULT '2', `background` INT(1) NOT NULL DEFAULT '1', `online` BOOLEAN NOT NULL DEFAULT TRUE, `increment` UNSIGNED INT NOT NULL DEFAULT 1 );");
+    sql = mx_strrejoin(sql, "CREATE TABLE `users` ( `id` INTEGER PRIMARY KEY AUTOINCREMENT , `username` VARCHAR(10) NOT NULL , `name` VARCHAR(10) NOT NULL , `code` VARCHAR(12) NOT NULL , `password` VARCHAR(16) NOT NULL, `team` INT(1) NOT NULL DEFAULT '1', `avatar` INT(9) NOT NULL DEFAULT '0', `theme` INT(1) NOT NULL DEFAULT '2', `background` INT(1) NOT NULL DEFAULT '1',  `lvl` INT(1) NOT NULL DEFAULT '1', `solve` BOOLEAN NOT NULL DEFAULT FALSE,  `answer` VARCHAR(1024) NULL DEFAULT NULL ,`online` BOOLEAN NOT NULL DEFAULT TRUE, `increment` UNSIGNED INT NOT NULL DEFAULT 1 );");
     sql = mx_strrejoin(sql, "CREATE TABLE `chats` ( `id` INTEGER PRIMARY KEY AUTOINCREMENT , `title` VARCHAR(16) DEFAULT NULL , `members` INT(4) NOT NULL DEFAULT '2', `increment` UNSIGNED INT NOT NULL DEFAULT 1 );");
     sql = mx_strrejoin(sql, "CREATE TABLE `members` ( `id` INTEGER PRIMARY KEY AUTOINCREMENT , `chat_id` INT NOT NULL , `user_id` INT NOT NULL , `admin` BOOLEAN NOT NULL DEFAULT FALSE );");
+    sql = mx_strrejoin(sql, "CREATE TABLE `tasks` ( `id` INTEGER PRIMARY KEY AUTOINCREMENT ,  `answer` VARCHAR(1000), `discribe` VARCHAR(1000) );");
     sql = mx_strrejoin(sql, "CREATE TABLE `messages` ( `id` INTEGER PRIMARY KEY AUTOINCREMENT , `message_id` INT NOT NULL , `chat_id` INT NOT NULL , `user_id` INT NOT NULL , `date` VARCHAR(10) NOT NULL , `time` VARCHAR(5) NOT NULL , `text` VARCHAR(1024) NULL DEFAULT NULL , `sticker_id` INT NULL DEFAULT NULL , `photo_id` INT NULL DEFAULT NULL );");
     rc = sqlite3_exec(db, sql, 0, 0, &err_msg);
     if (rc != SQLITE_OK) {
